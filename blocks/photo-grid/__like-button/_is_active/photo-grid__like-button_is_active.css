@@ -1,0 +1,8 @@
+.photo-grid__like-button_is_active {
+  background-image: url('../../../../images/like-button-icon-full-filled.svg');
+  transition: background-image 0.2s ease;
+}
+
+.photo-grid__like-button_is_active:hover {
+  opacity: 1;
+}
