@@ -1,0 +1,22 @@
+.profile__status {
+  grid-column-start: 1;
+  display: inline-block;
+  margin: 7px 0 0;
+  font-size: 18px;
+  font-weight: normal;
+  line-height: 21.78px;
+  color: #ffffff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 767px) {
+
+  .profile__status {
+    font-size: 14px;
+    line-height: 16.94px;
+    text-align: center;
+  }
+
+}
