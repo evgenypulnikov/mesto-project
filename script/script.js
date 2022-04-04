@@ -72,8 +72,8 @@ function closePopup(popup) {
 
 function createCard(link, name) {
   placeTemplateImg.src = link;
+  placeTemplateImg.alt = name;
   placeTemplateTitle.textContent = name;
-  placeTemplateImg.alt = placeTemplateTitle.textContent;
 
   const placeElement = placeTemplate.cloneNode(true);
 
@@ -89,8 +89,8 @@ function createCard(link, name) {
 
   const placeImg = placeElement.querySelector('.photo-grid__image');
   placeImg.addEventListener('click', function() {
-    fullViewImg.setAttribute('src', link);
-    fullViewImg.setAttribute('alt', name);
+    fullViewImg.src = link;
+    fullViewImg.alt = name;
     fullViewImgCaption.textContent = name;
     openPopup(fullViewPopup);
   });
