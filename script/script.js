@@ -68,60 +68,7 @@ function closePopup(popup) {
   popup.classList.remove('popup_is_opened');
 }
 
-// 2. Edit Profile Popup
-
-editProfileButton.addEventListener('click', function() {
-  profileNameInput.value = profileNameElement.textContent;
-  profileStatusInput.value = profileStatusElement.textContent;
-  openPopup(editProfilePopup);
-});
-
-// 2.1 Edit Profile Submit
-
-editProfileForm.addEventListener('submit', function(evt) {
-  evt.preventDefault();
-  profileNameElement.textContent = profileNameInput.value;
-  profileStatusElement.textContent = profileStatusInput.value;
-  closePopup(editProfilePopup);
-});
-
-// 3. Add Place Popup
-
-addPlaceButton.addEventListener('click', function() {
-  placeTitleInput.value = '';
-  placeUrlInput.value = '';
-  openPopup(addPlacePopup);
-});
-
-// 3.1 Add Place Submit
-
-addPlaceForm.addEventListener('submit', function(evt) {
-  evt.preventDefault();
-  createCard(placeUrlInput.value, placeTitleInput.value);
-  closePopup(addPlacePopup);
-});
-
-// 4. Render Card
-
-function renderCard(card, container) {
-  container.prepend(card);
-
-  // 4.1 Pre-Create Full-View Popup
-
-  const placeImg = placesContainer.querySelector('.photo-grid__image');
-  placeImg.addEventListener('click', function(evt) {
-    fullViewImg.setAttribute('src', evt.target.src);
-    fullViewImg.setAttribute('alt', evt.target.alt);
-
-    const targetImgCaption = evt.target.closest('.photo-grid__item').querySelector('.photo-grid__item-title');
-    const fullViewImgCaption = fullViewContainer.querySelector('.full-view__caption');
-    fullViewImgCaption.textContent = targetImgCaption.textContent;
-
-    openPopup(fullViewPopup);
-  });
-}
-
-// 5. Create Card
+// 2. Create Card
 
 function createCard(link, name) {
   placeTemplateImg.src = link;
@@ -140,14 +87,61 @@ function createCard(link, name) {
     evt.target.closest('.photo-grid__item').remove();
   });
 
-  renderCard(placeElement, placesContainer);
+  const placeImg = placeElement.querySelector('.photo-grid__image');
+  placeImg.addEventListener('click', function() {
+    fullViewImg.setAttribute('src', link);
+    fullViewImg.setAttribute('alt', name);
+    fullViewImgCaption.textContent = name;
+    openPopup(fullViewPopup);
+  });
   return placeElement;
 }
+
+// 3. Render Card
+
+function renderCard(card, container) {
+  container.prepend(card);
+}
+
+// 4. Edit Profile Popup
+
+editProfileButton.addEventListener('click', function() {
+  profileNameInput.value = profileNameElement.textContent;
+  profileStatusInput.value = profileStatusElement.textContent;
+  openPopup(editProfilePopup);
+});
+
+// 4.1 Edit Profile Submit
+
+editProfileForm.addEventListener('submit', function(evt) {
+  evt.preventDefault();
+  profileNameElement.textContent = profileNameInput.value;
+  profileStatusElement.textContent = profileStatusInput.value;
+  closePopup(editProfilePopup);
+});
+
+// 5. Add Place Popup
+
+addPlaceButton.addEventListener('click', function() {
+  placeTitleInput.value = '';
+  placeUrlInput.value = '';
+  openPopup(addPlacePopup);
+});
+
+// 5.1 Add Place Submit
+
+addPlaceForm.addEventListener('submit', function(evt) {
+  evt.preventDefault();
+  const card = createCard(placeUrlInput.value, placeTitleInput.value);
+  renderCard(card, placesContainer);
+  closePopup(addPlacePopup);
+});
 
 // 6. Init Places
 
 initPlaces.forEach(function(initPlaces) {
-  createCard(initPlaces.link, initPlaces.name);
+  const card = createCard(initPlaces.link, initPlaces.name);
+  renderCard(card, placesContainer);
 });
 
 // 7. Close Button
