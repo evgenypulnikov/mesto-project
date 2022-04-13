@@ -13,6 +13,10 @@
 * CSS3 (Flex, Grid, Адаптивная/отзывчивая вёрстка, Анимации),
 * JS (Модальные окна, редактирование профиля, добавление/удаление/лайк постов, полноразмерное превью изображения при клике).
 
+**ссылка на pages:**
+
+https://evgenypulnikov.github.io/mesto-project/
+
 ___
 
 ![image](https://user-images.githubusercontent.com/51275060/163239003-0c62f510-0dd8-4a65-8fd0-77abb478d644.png)
