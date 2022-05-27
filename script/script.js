@@ -29,6 +29,8 @@ const initPlaces = [
   }
 ]
 
+const popupsContainers = document.querySelectorAll('.popup__container');
+
 // + Edit Profile
 
 const editProfilePopup = document.querySelector('.popup_edit-profile');
@@ -62,6 +64,18 @@ const fullViewImgCaption = fullViewContainer.querySelector('.full-view__caption'
 
 function openPopup(popup) {
   popup.classList.add('popup_is_opened');
+
+  document.addEventListener('keydown', function(evt) {
+    if (evt.key === 'Escape' && popup.classList.contains('popup_is_opened')) {
+      popup.classList.remove('popup_is_opened');
+    }
+  });
+
+  popup.addEventListener('click', function() {
+    if (popup.classList.contains('popup_is_opened')) {
+      popup.classList.remove('popup_is_opened');
+    }
+  });
 }
 
 function closePopup(popup) {
@@ -151,4 +165,12 @@ const closeButton = document.querySelectorAll('.popup__close-button');
     btn.addEventListener('click', function(evt) {
       closePopup(evt.target.closest('.popup'));
     });
+});
+
+// 8. Exclude Content From Overlay
+
+popupsContainers.forEach(function(elem) {
+  elem.addEventListener('click', function(evt) {
+    evt.stopPropagation();
+  });
 });
