@@ -1,14 +1,15 @@
-.form__user-data {
+.form__fieldset {
   display: flex;
   flex-direction: column;
-  margin: 47px 0 0;
+  row-gap: 11px;
+  margin: 46px 0 0;
   padding: 0;
   border: none;
 }
 
 @media screen and (max-width: 767px) {
 
-  .form__user-data {
+  .form__fieldset {
     margin-top: 78px;
   }
 
