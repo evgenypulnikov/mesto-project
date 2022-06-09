@@ -1,3 +1,5 @@
+const popups = document.querySelectorAll('.popup');
+
 /*___ Edit Profile Modal */
 
 const editProfileButton = document.querySelector('.profile__edit-button');
@@ -5,16 +7,18 @@ const editProfilePopup = document.querySelector('.popup_edit-profile');
 const profileNameElement = document.querySelector('.profile__name');
 const profileStatusElement = document.querySelector('.profile__status');
 const editProfileForm = document.forms.editProfileForm;
-const profileNameInput = document.editProfileForm.elements.profileName;
-const profileStatusInput = document.editProfileForm.elements.profileStatus;
+const profileNameInput = editProfileForm.elements.profileName;
+const profileStatusInput = editProfileForm.elements.profileStatus;
+const editProfileSubmit = editProfileForm.querySelector('.form__submit');
 
 /*___ Add Place Modal */
 
 const addPlaceButton = document.querySelector('.profile__add-button');
 const addPlacePopup = document.querySelector('.popup_add-place');
 const addPlaceForm = document.forms.addPlaceForm;
-const placeTitleInput = document.addPlaceForm.elements.placeTitle;
-const placeUrlInput = document.addPlaceForm.elements.placeUrl;
+const placeTitleInput = addPlaceForm.elements.placeTitle;
+const placeUrlInput = addPlaceForm.elements.placeUrl;
+const addPlaceSubmit = addPlaceForm.querySelector('.form__submit');
 const placesContainer = document.querySelector('.photo-grid__list');
 
 /*___ Init Places */
@@ -46,17 +50,30 @@ const initPlaces = [
   }
 ]
 
-export { editProfileButton,
+/*___ Full View */
+
+const fullViewPopup = document.querySelector('.popup_image-full');
+const fullViewImg = fullViewPopup.querySelector('.full-view__image');
+const fullViewImgCaption = fullViewPopup.querySelector('.full-view__caption');
+
+export { popups,
+  editProfileButton,
   editProfilePopup,
   profileNameElement,
   profileStatusElement,
   editProfileForm,
   profileNameInput,
   profileStatusInput,
+  editProfileSubmit,
   addPlaceButton,
   addPlacePopup,
   addPlaceForm,
   placeTitleInput,
   placeUrlInput,
+  addPlaceSubmit,
   placesContainer,
-  initPlaces };
+  initPlaces,
+  fullViewPopup,
+  fullViewImg,
+  fullViewImgCaption
+ };

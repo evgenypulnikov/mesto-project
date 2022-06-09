@@ -1,13 +1,11 @@
 import { openPopup } from './modal.js';
-import { initPlaces } from './vars.js';
+import { placesContainer, initPlaces, fullViewPopup, fullViewImg, fullViewImgCaption } from './vars.js';
+
+
 
 /*___ Create Card */
 
 function createCard(link, name) {
-  const fullViewPopup = document.querySelector('.popup_image-full');
-  const fullViewContainer = document.querySelector('.full-view');
-  const fullViewImg = fullViewPopup.querySelector('.full-view__image');
-  const fullViewImgCaption = fullViewContainer.querySelector('.full-view__caption');
   const placeTemplate = document.querySelector('#grid-post').content;
   const placeTemplateImg = placeTemplate.querySelector('.photo-grid__image');
   const placeTemplateTitle = placeTemplate.querySelector('.photo-grid__item-title');
@@ -35,6 +33,7 @@ function createCard(link, name) {
     fullViewImgCaption.textContent = name;
     openPopup(fullViewPopup);
   });
+
   return placeElement;
 }
 
@@ -44,8 +43,9 @@ function renderCard(card, container) {
   container.prepend(card);
 }
 
+/*___ Render All Cards */
+
 function renderAllCards() {
-  const placesContainer = document.querySelector('.photo-grid__list');
   initPlaces.forEach(function(initPlaces) {
     const card = createCard(initPlaces.link, initPlaces.name);
     renderCard(card, placesContainer);
