@@ -15,10 +15,13 @@
   </header>
   <main class="content">
     <section class="profile">
-      <img src="<%=require('./images/profile-picture.jpg')%>" alt="Фото профиля" class="profile__picture">
+      <div class="profile__avatar">
+        <img src="" alt="Фото профиля" class="profile__picture">
+        <button class="profile__avatar-change-button"></button>
+      </div>
       <div class="profile__info">
-        <h1 class="profile__name">Жак-Ив Кусто</h1>
-        <p class="profile__status">Исследователь океана</p>
+        <h1 class="profile__name"></h1>
+        <p class="profile__status"></p>
         <button type="button" class="profile__edit-button" aria-label="Редактировать профиль"></button>
       </div>
       <button type="button" class="profile__add-button" aria-label="Добавить изображение"></button>
@@ -68,6 +71,21 @@
     <button type="button" class="popup__close-button" aria-label="Закрыть редактирование"></button>
   </div>
 </div>
+<div class="popup popup_avatar-change">
+  <div class="popup__container">
+    <form action="#" method="get" class="form form_avatar-change" name="avatarChangeForm" novalidate>
+      <h3 class="form__title">Обновить аватар</h3>
+      <fieldset class="form__fieldset">
+        <label class="form__field">
+          <input class="form__input" id="avatar-url-input" type="url" name="avatarUrl" placeholder="Ссылка на картинку" required>
+          <span class="form__input-error avatar-url-input-error">Введите адрес сайта.</span>
+        </label>
+        <button class="form__submit" type="submit" name="avatarSubmit">Сохранить</button>
+      </fieldset>
+    </form>
+    <button type="button" class="popup__close-button" aria-label="Закрыть редактирование"></button>
+  </div>
+</div>
 <div class="popup popup_image-full">
   <div class="popup__container">
     <div class="full-view">
@@ -77,12 +95,16 @@
     <button type="button" class="popup__close-button" aria-label="Закрыть редактирование"></button>
   </div>
 </div>
+
 <template id="grid-post">
   <li class="photo-grid__item">
     <img src="" alt="" class="photo-grid__image">
     <div class="photo-grid__item-lining">
       <h2 class="photo-grid__item-title"></h2>
-      <button type="button" class="photo-grid__like-button" aria-label="Поставить лайк"></button>
+      <div class="photo-grid__like">
+        <button type="button" class="photo-grid__like-button" aria-label="Поставить лайк"></button>
+        <span class="photo-grid__likes-counter">0</span>
+      </div>
     </div>
     <button type="button" class="photo-grid__delete-button" aria-label="Удалить пост"></button>
   </li>
