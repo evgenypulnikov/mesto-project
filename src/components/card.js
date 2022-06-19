@@ -26,22 +26,22 @@ function createCard(link, name, owner, id, likes, likesArr) {
   likeButton.addEventListener('click', function(evt) {
     if(!evt.target.classList.contains('photo-grid__like-button_is_active')) {
       evt.target.classList.add('photo-grid__like-button_is_active');
-      addLike(id)
-        .then((res) => {
-          likesCounter.textContent = res.likes.length;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      // addLike(id)
+      //   .then((res) => {
+      //     likesCounter.textContent = res.likes.length;
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     } else {
       evt.target.classList.remove('photo-grid__like-button_is_active');
-      removeLike(id)
-        .then((res) => {
-          likesCounter.textContent = res.likes.length;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      // removeLike(id)
+      //   .then((res) => {
+      //     likesCounter.textContent = res.likes.length;
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     }
   });
 
