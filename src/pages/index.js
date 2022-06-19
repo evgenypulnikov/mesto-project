@@ -86,15 +86,11 @@ editProfileForm.addEventListener('submit', function(evt) {
 
   editUserData(profileNameElement.textContent, profileStatusElement.textContent)
     .finally(() => {
+      editProfileSubmit.classList.add('form__submit_is_disabled');
+      editProfileSubmit.setAttribute('disabled', '');
+      closePopup(editProfilePopup);
       submitLoading(false, editProfileSubmit, 'Сохранить');
     });
-
-  editProfileSubmit.classList.add('form__submit_is_disabled');
-  editProfileSubmit.setAttribute('disabled', '');
-
-  setTimeout(() => {
-    closePopup(editProfilePopup);
-  }, 500);
 });
 
 /*___ Add Place Modal Listeners */
@@ -117,17 +113,13 @@ addPlaceForm.addEventListener('submit', function(evt) {
       console.log(err);
     })
     .finally(() => {
+      addPlaceSubmit.classList.add('form__submit_is_disabled');
+      addPlaceSubmit.setAttribute('disabled', '');
+      closePopup(addPlacePopup);
       submitLoading(false, addPlaceSubmit, 'Создать');
     });
 
-  addPlaceSubmit.classList.add('form__submit_is_disabled');
-  addPlaceSubmit.setAttribute('disabled', '');
-
   addPlaceForm.reset();
-
-  setTimeout(() => {
-    closePopup(addPlacePopup);
-  }, 500);
 });
 
 /*___ Change Avatar Modal Listeners */
@@ -150,17 +142,13 @@ changeAvatarForm.addEventListener('submit', function(evt) {
       console.log(err);
     })
     .finally(() => {
+      changeAvatarSubmit.classList.add('form__submit_is_disabled');
+      changeAvatarSubmit.setAttribute('disabled', '');
+      closePopup(changeAvatarPopup);
       submitLoading(false, changeAvatarSubmit, 'Сохранить');
     });
 
-  changeAvatarSubmit.classList.add('form__submit_is_disabled');
-  changeAvatarSubmit.setAttribute('disabled', '');
-
   changeAvatarForm.reset();
-
-  setTimeout(() => {
-    closePopup(changeAvatarPopup);
-  }, 500);
 });
 
 /*___ Enable Validation */
