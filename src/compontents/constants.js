@@ -28,6 +28,9 @@ const addPlaceForm = document.forms.addPlaceForm;
 const placeTitleInput = addPlaceForm.elements.placeTitle;
 const placeUrlInput = addPlaceForm.elements.placeUrl;
 const addPlaceSubmit = addPlaceForm.querySelector('.form__submit');
+const placeTemplate = document.querySelector('#grid-post').content;
+const placeTemplateImg = placeTemplate.querySelector('.photo-grid__image');
+const placeTemplateTitle = placeTemplate.querySelector('.photo-grid__item-title');
 const placesContainer = document.querySelector('.photo-grid__list');
 
 /*___ Full View */
@@ -57,6 +60,9 @@ export { popups,
   placeTitleInput,
   placeUrlInput,
   addPlaceSubmit,
+  placeTemplate,
+  placeTemplateImg,
+  placeTemplateTitle,
   placesContainer,
   fullViewPopup,
   fullViewImg,

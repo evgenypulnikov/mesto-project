@@ -8,6 +8,7 @@ import { validationParams,
   checkInputValidity,
   hasInvalidInput,
   toggleSubmitState,
+  disableSubmitButton,
   enableValidation
 } from '../compontents/validate.js';
 
@@ -37,22 +38,16 @@ import { popups,
 import { changeAvatar,
   getUserData,
   editUserData,
+  getUserId,
   getCards,
   addNewCard,
   deleteCard,
   addLike,
-  removeLike
+  removeLike,
+  getActiveLikes,
 } from '../compontents/api.js'
 
-/*___ Forms Submit Loading */
-
-export function submitLoading(isLoading, submitButton, submitDefaultText) {
-  if(isLoading) {
-    submitButton.textContent = 'Сохранение...';
-  } else {
-    submitButton.textContent = submitDefaultText;
-  }
-}
+import { submitLoading } from '../compontents/utils.js'
 
 /*___ Modals Listener */
 
@@ -67,28 +62,37 @@ popups.forEach((popup) => {
   });
 });
 
+/*___ Get & Set User Info */
+
+function getUserInfo(name, about) {
+  profileNameInput.value = name;
+  profileStatusInput.value = about;
+}
+
+function setUserInfo(name, about) {
+  profileNameElement.textContent = name;
+  profileStatusElement.textContent = about;
+}
+
 /*___ Edit Profile Modal Listeners */
 
 editProfileButton.addEventListener('click', function() {
-  profileNameInput.value = profileNameElement.textContent;
-  profileStatusInput.value = profileStatusElement.textContent;
-
+  getUserInfo(profileNameElement.textContent, profileStatusElement.textContent);
   openPopup(editProfilePopup);
 });
 
 editProfileForm.addEventListener('submit', function(evt) {
   evt.preventDefault();
 
-  profileNameElement.textContent = profileNameInput.value;
-  profileStatusElement.textContent = profileStatusInput.value;
-
+  setUserInfo(profileNameInput.value, profileStatusInput.value);
   submitLoading(true, editProfileSubmit);
 
   editUserData(profileNameElement.textContent, profileStatusElement.textContent)
-    .finally(() => {
-      editProfileSubmit.classList.add('form__submit_is_disabled');
-      editProfileSubmit.setAttribute('disabled', '');
+    .then(() => {
       closePopup(editProfilePopup);
+    })
+    .finally(() => {
+      disableSubmitButton(editProfileSubmit);
       submitLoading(false, editProfileSubmit, 'Сохранить');
     });
 });
@@ -107,15 +111,13 @@ addPlaceForm.addEventListener('submit', function(evt) {
   addNewCard(placeTitleInput.value, placeUrlInput.value)
     .then((res) => {
       renderCardOnSubmit(res);
-      return Promise.reject(`Ошибка: ${res.status}`);
+      closePopup(addPlacePopup);
     })
     .catch((err) => {
       console.log(err);
     })
     .finally(() => {
-      addPlaceSubmit.classList.add('form__submit_is_disabled');
-      addPlaceSubmit.setAttribute('disabled', '');
-      closePopup(addPlacePopup);
+      disableSubmitButton(addPlaceSubmit);
       submitLoading(false, addPlaceSubmit, 'Создать');
     });
 
@@ -136,15 +138,13 @@ changeAvatarForm.addEventListener('submit', function(evt) {
   changeAvatar(changeAvatarUrlInput.value)
     .then((res) => {
       profileAvatarElement.src = res.avatar;
-      return Promise.reject(`Ошибка: ${res.status}`);
+      closePopup(changeAvatarPopup);
     })
     .catch((err) => {
       console.log(err);
     })
     .finally(() => {
-      changeAvatarSubmit.classList.add('form__submit_is_disabled');
-      changeAvatarSubmit.setAttribute('disabled', '');
-      closePopup(changeAvatarPopup);
+      disableSubmitButton(changeAvatarSubmit);
       submitLoading(false, changeAvatarSubmit, 'Сохранить');
     });
 
@@ -155,14 +155,12 @@ changeAvatarForm.addEventListener('submit', function(evt) {
 
 enableValidation(validationParams);
 
-/*___ Server Interaction */
+/*___ Get User */
 
 getUserData()
   .then((res) => {
     profileAvatarElement.src = res.avatar;
-    profileNameElement.textContent = res.name;
-    profileStatusElement.textContent = res.about;
-    return Promise.reject(`Ошибка: ${res.status}`);
+    setUserInfo(res.name, res.about);
   })
   .catch((err) => {
     console.log(err);

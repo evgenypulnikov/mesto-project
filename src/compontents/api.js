@@ -38,6 +38,17 @@ function getUserData() {
   });
 }
 
+/*___ Get User Id */
+
+function getUserId() {
+  return fetch(`${config.baseUrl}/users/me`, {
+    headers: config.headers
+  })
+  .then((res) => {
+    return checkRes(res);
+  });
+}
+
 /*___ Edit User Data */
 
 function editUserData(name, about) {
@@ -126,4 +137,4 @@ function getActiveLikes() {
     });
 }
 
-export { changeAvatar, getUserData, editUserData, getCards, addNewCard, deleteCard, addLike, removeLike, getActiveLikes }
+export { changeAvatar, getUserData, getUserId, editUserData, getCards, addNewCard, deleteCard, addLike, removeLike, getActiveLikes }
