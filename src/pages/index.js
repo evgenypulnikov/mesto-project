@@ -1,7 +1,7 @@
 import '../pages/index.css';
 
-import { openPopup, closePopup } from '../compontents/modal.js';
-import { renderCardOnSubmit, renderAllCards } from '../compontents/card.js';
+import { openPopup, closePopup } from '../components/modal.js';
+import { renderCardOnSubmit, renderAllCards } from '../components/card.js';
 import { validationParams,
   showInputError,
   hideInputError,
@@ -10,7 +10,7 @@ import { validationParams,
   toggleSubmitState,
   disableSubmitButton,
   enableValidation
-} from '../compontents/validate.js';
+} from '../components/validate.js';
 
 import { popups,
   changeAvatarButton,
@@ -33,7 +33,7 @@ import { popups,
   placeTitleInput,
   placeUrlInput,
   addPlaceSubmit,
-} from '../compontents/constants.js';
+} from '../components/constants.js';
 
 import { changeAvatar,
   getUserData,
@@ -45,9 +45,9 @@ import { changeAvatar,
   addLike,
   removeLike,
   getActiveLikes,
-} from '../compontents/api.js'
+} from '../components/api.js'
 
-import { submitLoading } from '../compontents/utils.js'
+import { submitLoading } from '../utils/utils.js'
 
 /*___ Modals Listener */
 
@@ -84,11 +84,11 @@ editProfileButton.addEventListener('click', function() {
 editProfileForm.addEventListener('submit', function(evt) {
   evt.preventDefault();
 
-  setUserInfo(profileNameInput.value, profileStatusInput.value);
   submitLoading(true, editProfileSubmit);
 
   editUserData(profileNameElement.textContent, profileStatusElement.textContent)
     .then(() => {
+      setUserInfo(profileNameInput.value, profileStatusInput.value);
       closePopup(editProfilePopup);
     })
     .finally(() => {
@@ -112,6 +112,7 @@ addPlaceForm.addEventListener('submit', function(evt) {
     .then((res) => {
       renderCardOnSubmit(res);
       closePopup(addPlacePopup);
+      addPlaceForm.reset();
     })
     .catch((err) => {
       console.log(err);
@@ -120,8 +121,6 @@ addPlaceForm.addEventListener('submit', function(evt) {
       disableSubmitButton(addPlaceSubmit);
       submitLoading(false, addPlaceSubmit, 'Создать');
     });
-
-  addPlaceForm.reset();
 });
 
 /*___ Change Avatar Modal Listeners */
@@ -139,6 +138,7 @@ changeAvatarForm.addEventListener('submit', function(evt) {
     .then((res) => {
       profileAvatarElement.src = res.avatar;
       closePopup(changeAvatarPopup);
+      changeAvatarForm.reset();
     })
     .catch((err) => {
       console.log(err);
@@ -147,8 +147,6 @@ changeAvatarForm.addEventListener('submit', function(evt) {
       disableSubmitButton(changeAvatarSubmit);
       submitLoading(false, changeAvatarSubmit, 'Сохранить');
     });
-
-  changeAvatarForm.reset();
 });
 
 /*___ Enable Validation */
