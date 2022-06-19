@@ -1,7 +1,7 @@
-import './pages/index.css';
+import '../pages/index.css';
 
-import { openPopup, closePopup } from '../src/modules/modal.js';
-import { createCard, renderCard } from '../src/modules/card.js';
+import { openPopup, closePopup } from '../compontents/modal.js';
+import { renderCardOnSubmit, renderAllCards } from '../compontents/card.js';
 import { validationParams,
   showInputError,
   hideInputError,
@@ -9,7 +9,7 @@ import { validationParams,
   hasInvalidInput,
   toggleSubmitState,
   enableValidation
-} from '../src/modules/validate.js';
+} from '../compontents/validate.js';
 
 import { popups,
   changeAvatarButton,
@@ -19,6 +19,7 @@ import { popups,
   changeAvatarSubmit,
   editProfileButton,
   editProfilePopup,
+  profileAvatarElement,
   profileNameElement,
   profileStatusElement,
   editProfileForm,
@@ -31,18 +32,17 @@ import { popups,
   placeTitleInput,
   placeUrlInput,
   addPlaceSubmit,
-  placesContainer
-} from '../src/modules/vars.js';
+} from '../compontents/constants.js';
 
 import { changeAvatar,
   getUserData,
   editUserData,
-  renderCards,
+  getCards,
   addNewCard,
   deleteCard,
   addLike,
   removeLike
-} from '../src/modules/api.js'
+} from '../compontents/api.js'
 
 /*___ Forms Submit Loading */
 
@@ -83,12 +83,18 @@ editProfileForm.addEventListener('submit', function(evt) {
   profileStatusElement.textContent = profileStatusInput.value;
 
   submitLoading(true, editProfileSubmit);
-  editUserData(profileNameElement.textContent, profileStatusElement.textContent);
+
+  editUserData(profileNameElement.textContent, profileStatusElement.textContent)
+    .finally(() => {
+      submitLoading(false, editProfileSubmit, 'Сохранить');
+    });
 
   editProfileSubmit.classList.add('form__submit_is_disabled');
   editProfileSubmit.setAttribute('disabled', '');
 
-  closePopup(editProfilePopup);
+  setTimeout(() => {
+    closePopup(editProfilePopup);
+  }, 500);
 });
 
 /*___ Add Place Modal Listeners */
@@ -100,15 +106,28 @@ addPlaceButton.addEventListener('click', function() {
 addPlaceForm.addEventListener('submit', function(evt) {
   evt.preventDefault();
 
-  const card = createCard(placeUrlInput.value, placeTitleInput.value);
-  renderCard(card, placesContainer);
-  addNewCard(placeTitleInput.value, placeUrlInput.value);
+  submitLoading(true, addPlaceSubmit);
+
+  addNewCard(placeTitleInput.value, placeUrlInput.value)
+    .then((res) => {
+      renderCardOnSubmit(res);
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      submitLoading(false, addPlaceSubmit, 'Создать');
+    });
 
   addPlaceSubmit.classList.add('form__submit_is_disabled');
   addPlaceSubmit.setAttribute('disabled', '');
 
   addPlaceForm.reset();
-  closePopup(addPlacePopup);
+
+  setTimeout(() => {
+    closePopup(addPlacePopup);
+  }, 500);
 });
 
 /*___ Change Avatar Modal Listeners */
@@ -120,13 +139,28 @@ changeAvatarButton.addEventListener('click', function() {
 changeAvatarForm.addEventListener('submit', function(evt) {
   evt.preventDefault();
 
-  changeAvatar(changeAvatarUrlInput.value);
+  submitLoading(true, changeAvatarSubmit);
+
+  changeAvatar(changeAvatarUrlInput.value)
+    .then((res) => {
+      profileAvatarElement.src = res.avatar;
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      submitLoading(false, changeAvatarSubmit, 'Сохранить');
+    });
 
   changeAvatarSubmit.classList.add('form__submit_is_disabled');
   changeAvatarSubmit.setAttribute('disabled', '');
 
   changeAvatarForm.reset();
-  closePopup(changeAvatarPopup);
+
+  setTimeout(() => {
+    closePopup(changeAvatarPopup);
+  }, 500);
 });
 
 /*___ Enable Validation */
@@ -135,5 +169,15 @@ enableValidation(validationParams);
 
 /*___ Server Interaction */
 
-renderCards();
-getUserData();
+getUserData()
+  .then((res) => {
+    profileAvatarElement.src = res.avatar;
+    profileNameElement.textContent = res.name;
+    profileStatusElement.textContent = res.about;
+    return Promise.reject(`Ошибка: ${res.status}`);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+renderAllCards();
