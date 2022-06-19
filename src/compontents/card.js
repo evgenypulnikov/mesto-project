@@ -1,14 +1,18 @@
 import { openPopup } from './modal.js';
-import { getCards, deleteCard, addLike, removeLike, getActiveLikes } from './api.js';
-import { placesContainer, fullViewPopup, fullViewImg, fullViewImgCaption } from './constants.js';
+import { getUserId, getCards, deleteCard, addLike, removeLike, getActiveLikes } from './api.js';
+import { placeTemplate, placeTemplateImg, placeTemplateTitle, placesContainer, fullViewPopup, fullViewImg, fullViewImgCaption } from './constants.js';
+
+getUserId()
+  .then((res) => {
+    let user = res._id;
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 /*___ Create Card */
 
 function createCard(link, name, owner, id, likes, likesArr) {
-  const placeTemplate = document.querySelector('#grid-post').content;
-  const placeTemplateImg = placeTemplate.querySelector('.photo-grid__image');
-  const placeTemplateTitle = placeTemplate.querySelector('.photo-grid__item-title');
-
   placeTemplateImg.src = link;
   placeTemplateImg.alt = name;
   placeTemplateImg.id = id;
@@ -25,7 +29,6 @@ function createCard(link, name, owner, id, likes, likesArr) {
       addLike(id)
         .then((res) => {
           likesCounter.textContent = res.likes.length;
-          return Promise.reject(`Ошибка: ${res.status}`);
         })
         .catch((err) => {
           console.log(err);
@@ -35,7 +38,6 @@ function createCard(link, name, owner, id, likes, likesArr) {
       removeLike(id)
         .then((res) => {
           likesCounter.textContent = res.likes.length;
-          return Promise.reject(`Ошибка: ${res.status}`);
         })
         .catch((err) => {
           console.log(err);
@@ -48,12 +50,14 @@ function createCard(link, name, owner, id, likes, likesArr) {
   getActiveLikes()
     .then((res) => {
       likesArr.forEach((like) => {
-        console.log(like._id);
         if(like._id === '34f8cd9478826799e75475a9') {
           likeButton.classList.add('photo-grid__like-button_is_active');
         }
-      });
+      })
     })
+    .catch((err) => {
+      console.log(err);
+    });
 
 
   const ownerId = owner;
@@ -104,9 +108,7 @@ function renderCardOnSubmit(res) {
 function renderAllCards() {
   getCards()
   .then((res) => {
-    const cardsJSON = JSON.stringify(res);
-    const cardsObj = JSON.parse(cardsJSON);
-    cardsObj.forEach((card) => {
+    res.forEach((card) => {
       const newCard = createCard(card.link, card.name, card.owner._id, card._id, card.likes.length, card.likes);
       renderCard(newCard, placesContainer);
     })
@@ -115,8 +117,5 @@ function renderAllCards() {
     console.log(err);
   });
 }
-
-/*___ Get Active Likes */
-
 
 export { createCard, renderNewCard, renderCard, renderCardOnSubmit, renderAllCards };

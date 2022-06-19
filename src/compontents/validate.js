@@ -69,6 +69,13 @@ function setEventListeners(formElement, paramsObj) {
   });
 }
 
+/*___ Disable Submit Button */
+
+function disableSubmitButton(submitButton) {
+  submitButton.classList.add('form__submit_is_disabled');
+  submitButton.setAttribute('disabled', '');
+}
+
 /*___ Enable Listeners */
 
 function enableValidation(paramsObj) {
@@ -91,4 +98,5 @@ export { validationParams,
   checkInputValidity,
   hasInvalidInput,
   toggleSubmitState,
+  disableSubmitButton,
   enableValidation };
