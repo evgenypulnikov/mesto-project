@@ -2,9 +2,11 @@ import { openPopup } from './modal.js';
 import { getUserId, getCards, deleteCard, addLike, removeLike, getActiveLikes } from './api.js';
 import { placeTemplate, placeTemplateImg, placeTemplateTitle, placesContainer, fullViewPopup, fullViewImg, fullViewImgCaption } from './constants.js';
 
+let userId;
+
 getUserId()
   .then((res) => {
-    let user = res._id;
+    userId = res._id;
   })
   .catch((err) => {
     console.log(err);
@@ -12,11 +14,11 @@ getUserId()
 
 /*___ Create Card */
 
-function createCard(link, name, owner, id, likes, likesArr) {
-  placeTemplateImg.src = link;
-  placeTemplateImg.alt = name;
-  placeTemplateImg.id = id;
-  placeTemplateTitle.textContent = name;
+function createCard(card) {
+  placeTemplateImg.src = card.link;
+  placeTemplateImg.alt = card.name;
+  placeTemplateImg.id = card.id;
+  placeTemplateTitle.textContent = card.name;
 
   const placeElement = placeTemplate.cloneNode(true);
 
@@ -26,31 +28,31 @@ function createCard(link, name, owner, id, likes, likesArr) {
   likeButton.addEventListener('click', function(evt) {
     if(!evt.target.classList.contains('photo-grid__like-button_is_active')) {
       evt.target.classList.add('photo-grid__like-button_is_active');
-      // addLike(id)
-      //   .then((res) => {
-      //     likesCounter.textContent = res.likes.length;
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
+      addLike(card._id)
+        .then((res) => {
+          likesCounter.textContent = res.likes.length;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } else {
       evt.target.classList.remove('photo-grid__like-button_is_active');
-      // removeLike(id)
-      //   .then((res) => {
-      //     likesCounter.textContent = res.likes.length;
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
+      removeLike(card._id)
+        .then((res) => {
+          likesCounter.textContent = res.likes.length;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   });
 
-  likesCounter.textContent = likes;
+  likesCounter.textContent = card.likes.length;
 
   getActiveLikes()
     .then((res) => {
-      likesArr.forEach((like) => {
-        if(like._id === '34f8cd9478826799e75475a9') {
+      card.likes.forEach((like) => {
+        if(like._id === userId) {
           likeButton.classList.add('photo-grid__like-button_is_active');
         }
       })
@@ -60,16 +62,13 @@ function createCard(link, name, owner, id, likes, likesArr) {
     });
 
 
-  const ownerId = owner;
-  if(ownerId === '34f8cd9478826799e75475a9') {
+  const ownerId = card.owner._id;
+  if(ownerId === userId) {
     const deleteButton = placeElement.querySelector('.photo-grid__delete-button');
     deleteButton.style.display = 'block';
     deleteButton.addEventListener('click', function(evt) {
       evt.target.closest('.photo-grid__item').remove();
-      deleteCard(id)
-        .then((res) => {
-          return Promise.reject(`Ошибка: ${res.status}`);
-        })
+      deleteCard(card._id)
         .catch((err) => {
           console.log(err);
         });;
@@ -78,9 +77,9 @@ function createCard(link, name, owner, id, likes, likesArr) {
 
   const placeImg = placeElement.querySelector('.photo-grid__image');
   placeImg.addEventListener('click', function(evt) {
-    fullViewImg.src = link;
-    fullViewImg.alt = name;
-    fullViewImgCaption.textContent = name;
+    fullViewImg.src = card.link;
+    fullViewImg.alt = card.name;
+    fullViewImgCaption.textContent = card.name;
 
     openPopup(fullViewPopup);
   });
@@ -99,7 +98,7 @@ function renderCard(card, container) {
 }
 
 function renderCardOnSubmit(res) {
-  const card = createCard(res.link, res.name, res.owner._id, res._id, res.likes.length, res.likes);
+  const card = createCard(res);
   renderNewCard(card, placesContainer);
 }
 
@@ -109,7 +108,7 @@ function renderAllCards() {
   getCards()
   .then((res) => {
     res.forEach((card) => {
-      const newCard = createCard(card.link, card.name, card.owner._id, card._id, card.likes.length, card.likes);
+      const newCard = createCard(card);
       renderCard(newCard, placesContainer);
     })
   })
