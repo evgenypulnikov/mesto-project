@@ -1,25 +1,14 @@
 import { openPopup } from './modal.js';
-import { getUserId, getCards, deleteCard, addLike, removeLike, getActiveLikes } from './api.js';
-import { placeTemplate, placeTemplateImg, placeTemplateTitle, placesContainer, fullViewPopup, fullViewImg, fullViewImgCaption } from './constants.js';
-
-let userId;
-
-getUserId()
-  .then((res) => {
-    userId = res._id;
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+import { activeLikesHandler, addLikeHandler, deleteCardHandler, removeLikeHandler } from '../pages/index.js';
+import { placeTemplate, placeTemplateImg, placeTemplateTitle, fullViewPopup, fullViewImg, fullViewImgCaption } from './constants.js';
 
 /*___ Create Card */
 
-function createCard(card) {
+function createCard(card, userId) {
   placeTemplateImg.src = card.link;
   placeTemplateImg.alt = card.name;
   placeTemplateImg.id = card.id;
   placeTemplateTitle.textContent = card.name;
-
   const placeElement = placeTemplate.cloneNode(true);
 
   const likesCounter = placeElement.querySelector('.photo-grid__likes-counter');
@@ -28,39 +17,16 @@ function createCard(card) {
   likeButton.addEventListener('click', function(evt) {
     if(!evt.target.classList.contains('photo-grid__like-button_is_active')) {
       evt.target.classList.add('photo-grid__like-button_is_active');
-      addLike(card._id)
-        .then((res) => {
-          likesCounter.textContent = res.likes.length;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      addLikeHandler(card, likesCounter);
     } else {
       evt.target.classList.remove('photo-grid__like-button_is_active');
-      removeLike(card._id)
-        .then((res) => {
-          likesCounter.textContent = res.likes.length;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      removeLikeHandler(card, likesCounter);
     }
   });
 
   likesCounter.textContent = card.likes.length;
 
-  getActiveLikes()
-    .then((res) => {
-      card.likes.forEach((like) => {
-        if(like._id === userId) {
-          likeButton.classList.add('photo-grid__like-button_is_active');
-        }
-      })
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-
+  activeLikesHandler(card, userId, likeButton);
 
   const ownerId = card.owner._id;
   if(ownerId === userId) {
@@ -68,10 +34,7 @@ function createCard(card) {
     deleteButton.style.display = 'block';
     deleteButton.addEventListener('click', function(evt) {
       evt.target.closest('.photo-grid__item').remove();
-      deleteCard(card._id)
-        .catch((err) => {
-          console.log(err);
-        });;
+      deleteCardHandler(card);
     });
   }
 
@@ -97,24 +60,4 @@ function renderCard(card, container) {
   container.append(card);
 }
 
-function renderCardOnSubmit(res) {
-  const card = createCard(res);
-  renderNewCard(card, placesContainer);
-}
-
-/*___ Render All Cards */
-
-function renderAllCards() {
-  getCards()
-  .then((res) => {
-    res.forEach((card) => {
-      const newCard = createCard(card);
-      renderCard(newCard, placesContainer);
-    })
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-}
-
-export { createCard, renderNewCard, renderCard, renderCardOnSubmit, renderAllCards };
+export { createCard, renderNewCard, renderCard };
