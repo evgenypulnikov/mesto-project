@@ -1,7 +1,7 @@
 import '../pages/index.css';
 
-import { openPopup, closePopup } from '../compontents/modal.js';
-import { renderCardOnSubmit, renderAllCards } from '../compontents/card.js';
+import { openPopup, closePopup } from '../components/modal.js';
+import { createCard, renderNewCard, renderCard } from '../components/card.js';
 import { validationParams,
   showInputError,
   hideInputError,
@@ -10,7 +10,7 @@ import { validationParams,
   toggleSubmitState,
   disableSubmitButton,
   enableValidation
-} from '../compontents/validate.js';
+} from '../components/validate.js';
 
 import { popups,
   changeAvatarButton,
@@ -33,21 +33,21 @@ import { popups,
   placeTitleInput,
   placeUrlInput,
   addPlaceSubmit,
-} from '../compontents/constants.js';
+  placesContainer
+} from '../components/constants.js';
 
 import { changeAvatar,
   getUserData,
   editUserData,
-  getUserId,
   getCards,
   addNewCard,
   deleteCard,
   addLike,
   removeLike,
   getActiveLikes,
-} from '../compontents/api.js'
+} from '../components/api.js'
 
-import { submitLoading } from '../compontents/utils.js'
+import { submitLoading } from '../utils/utils.js'
 
 /*___ Modals Listener */
 
@@ -84,11 +84,11 @@ editProfileButton.addEventListener('click', function() {
 editProfileForm.addEventListener('submit', function(evt) {
   evt.preventDefault();
 
-  setUserInfo(profileNameInput.value, profileStatusInput.value);
   submitLoading(true, editProfileSubmit);
 
-  editUserData(profileNameElement.textContent, profileStatusElement.textContent)
+  editUserData(profileNameInput.value, profileStatusInput.value)
     .then(() => {
+      setUserInfo(profileNameInput.value, profileStatusInput.value);
       closePopup(editProfilePopup);
     })
     .finally(() => {
@@ -112,6 +112,7 @@ addPlaceForm.addEventListener('submit', function(evt) {
     .then((res) => {
       renderCardOnSubmit(res);
       closePopup(addPlacePopup);
+      addPlaceForm.reset();
     })
     .catch((err) => {
       console.log(err);
@@ -120,8 +121,6 @@ addPlaceForm.addEventListener('submit', function(evt) {
       disableSubmitButton(addPlaceSubmit);
       submitLoading(false, addPlaceSubmit, 'Создать');
     });
-
-  addPlaceForm.reset();
 });
 
 /*___ Change Avatar Modal Listeners */
@@ -139,6 +138,7 @@ changeAvatarForm.addEventListener('submit', function(evt) {
     .then((res) => {
       profileAvatarElement.src = res.avatar;
       closePopup(changeAvatarPopup);
+      changeAvatarForm.reset();
     })
     .catch((err) => {
       console.log(err);
@@ -147,23 +147,84 @@ changeAvatarForm.addEventListener('submit', function(evt) {
       disableSubmitButton(changeAvatarSubmit);
       submitLoading(false, changeAvatarSubmit, 'Сохранить');
     });
-
-  changeAvatarForm.reset();
 });
 
 /*___ Enable Validation */
 
 enableValidation(validationParams);
 
-/*___ Get User */
+/*___ Render Cards */
 
-getUserData()
+let userId;
+
+Promise.all([getUserData(), getCards()])
   .then((res) => {
-    profileAvatarElement.src = res.avatar;
-    setUserInfo(res.name, res.about);
+    userId = res[0]._id;
+    profileAvatarElement.src = res[0].avatar;
+    setUserInfo(res[0].name, res[0].about);
+    res[1].forEach((card) => {
+      const newCard = createCard(card, userId);
+      renderCard(newCard, placesContainer);
+    })
   })
   .catch((err) => {
     console.log(err);
   });
 
-renderAllCards();
+/*___ Add like */
+
+function addLikeHandler(card, counterElement) {
+  addLike(card._id)
+    .then((res) => {
+      counterElement.textContent = res.likes.length;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+/*___ Remove Like */
+
+function removeLikeHandler(card, counterElement) {
+  removeLike(card._id)
+    .then((res) => {
+      counterElement.textContent = res.likes.length;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+/*___ Active Likes */
+
+function activeLikesHandler(card, userId, likeButtonElement) {
+  getActiveLikes()
+    .then((res) => {
+      card.likes.forEach((like) => {
+        if(like._id === userId) {
+          likeButtonElement.classList.add('photo-grid__like-button_is_active');
+        }
+      })
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+/*___ Delete Cards */
+
+function deleteCardHandler(card) {
+  deleteCard(card._id)
+    .catch((err) => {
+      console.log(err);
+    });;
+}
+
+/*___ Render Card On Submit */
+
+function renderCardOnSubmit(res) {
+  const card = createCard(res, userId);
+  renderNewCard(card, placesContainer);
+}
+
+export { addLikeHandler, removeLikeHandler, activeLikesHandler, deleteCardHandler }
